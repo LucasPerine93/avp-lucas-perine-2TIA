@@ -53,12 +53,14 @@ app.get("/numeros", (req, res) => {
 });
 
 app.post("/pilotos", (req, res) => {
-  const { numero, nome, equipe } = req.body;
+  const { numero, nome, equipe } = req.body.dados;
 
   if (!numero || !nome || !equipe) {
     return res
       .status(400)
-      .json({ mensagem: "Todos os campos devem ser preenchidos" });
+      .json({ mensagem: "Todos os campos devem ser preenchidos",
+              recebido: req.body
+       });
   }
 
   const num = Number(numero);
@@ -85,9 +87,9 @@ app.post("/pilotos", (req, res) => {
   }
 
   const novoPiloto = {
-    numero: req.body.numero,
-    nome: req.body.nome,
-    equipe: req.body.equipe,
+    numero: numero,
+    nome: nome,
+    equipe: equipe
   };
 
   pilotos.push(novoPiloto);
