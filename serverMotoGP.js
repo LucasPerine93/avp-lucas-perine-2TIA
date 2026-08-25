@@ -52,6 +52,18 @@ app.get("/numeros", (req, res) => {
   res.json(numeros);
 });
 
+ app.get("/numeros/:buscar", (req, res) => {
+  const buscar = Number(req.params.buscar);
+  const numero = pilotos.find((numeros) => numeros.numero === buscar);
+
+  if (!numero) {
+    return res .status(404).json({mensagem: "O piloto não foi encontrado"});
+  }
+
+  res.json(numero)
+
+ });
+
 app.post("/pilotos", (req, res) => {
   const { numero, nome, equipe } = req.body.dados;
 
