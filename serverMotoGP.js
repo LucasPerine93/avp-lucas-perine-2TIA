@@ -99,7 +99,7 @@ app.post("/pilotos", (req, res) => {
   }
 
   const novoPiloto = {
-    numero: numero,
+    numero: num,
     nome: nome,
     equipe: equipe
   };
