@@ -13,14 +13,14 @@ const alunos = [
   { id: 5, nome: "Marcos", turma: "2TIB" },
   { id: 6, nome: "Michelly", turma: "2TIB" },
   { id: 7, nome: "Maria Fernanda", turma: "2TIB" },
-  { id: 8, nome: "Fellype", turma: "2TIB" }
+  { id: 8, nome: "Fellype", turma: "2TIB" },
 ];
 
 app.get("/", (req, res) => {
   res.json({
     mensagem: "Servidor Express funcionando!",
     disciplina: "Desenvolvimento de Websites",
-    bimestre: "3º bimestre"
+    bimestre: "3º bimestre",
   });
 });
 
@@ -35,7 +35,7 @@ app.get("/alunos/:id", (req, res) => {
 
   if (!aluno) {
     return res.status(404).json({
-      message: "Aluno não encontrado"
+      message: "Aluno não encontrado",
     });
   }
 
@@ -46,14 +46,55 @@ app.post("/alunos", (req, res) => {
   const novoAluno = {
     id: alunos.length + 1,
     nome: req.body.nome,
-    turma: req.body.turma
+    turma: req.body.turma,
   };
 
   alunos.push(novoAluno);
 
   res.status(201).json({
     mensagem: "Aluno cadastrado com sucesso",
-    aluno: novoAluno
+    aluno: novoAluno,
+  });
+});
+
+app.patch("/alunos/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const { nome, turma } = req.body;
+
+  const aluno = alunos.find((aluno) => aluno.id === id);
+
+  if (!aluno) {
+    return res.status(404).json({
+      message: "Aluno não encontrado",
+    });
+  }
+
+  if (nome) {
+    aluno.nome = nome;
+  }
+
+  if (turma) {
+    aluno.turma = turma;
+  }
+
+  res.json(aluno);
+});
+
+app.delete("/alunos/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const alunoIndex = alunos.findIndex((aluno) => aluno.id === id);
+
+  if (alunoIndex === -1) {
+    return res.status(404).json({
+      message: "Aluno não encontrado",
+    });
+  }
+
+  alunos.splice(alunoIndex, 1);
+
+  res.json({
+    message: "Aluno removido com sucesso",
   });
 });
 
