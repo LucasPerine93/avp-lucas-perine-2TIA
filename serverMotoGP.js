@@ -52,27 +52,25 @@ app.get("/numeros", (req, res) => {
   res.json(numeros);
 });
 
- app.get("/numeros/:buscar", (req, res) => {
+app.get("/numeros/:buscar", (req, res) => {
   const buscar = Number(req.params.buscar);
   const numero = pilotos.find((numeros) => numeros.numero === buscar);
 
   if (!numero) {
-    return res .status(404).json({mensagem: "O piloto não foi encontrado"});
+    return res.status(404).json({ mensagem: "O piloto não foi encontrado" });
   }
 
-  res.json(numero)
-
- });
+  res.json(numero);
+});
 
 app.post("/pilotos", (req, res) => {
-  const { numero, nome, equipe } = req.body.dados;
+  const { numero, nome, equipe } = req.body;
 
   if (!numero || !nome || !equipe) {
-    return res
-      .status(400)
-      .json({ mensagem: "Todos os campos devem ser preenchidos",
-              recebido: req.body
-       });
+    return res.status(400).json({
+      mensagem: "Todos os campos devem ser preenchidos",
+      recebido: req.body,
+    });
   }
 
   const num = Number(numero);
@@ -101,7 +99,7 @@ app.post("/pilotos", (req, res) => {
   const novoPiloto = {
     numero: num,
     nome: nome,
-    equipe: equipe
+    equipe: equipe,
   };
 
   pilotos.push(novoPiloto);
@@ -110,6 +108,31 @@ app.post("/pilotos", (req, res) => {
     mensagem: "Piloto adicionado ao grid!",
     piloto: novoPiloto,
   });
+});
+
+app.patch("/pilotos/:numero", (req, res) => {
+  const buscarNumero = Number(req.params.numero);
+  const { numero, nome, equipe } = req.body;
+
+  const piloto = pilotos.find((piloto) => piloto.numero === buscarNumero);
+
+  if (!piloto) {
+    return res.status(404).json({ mensagem: "Piloto não encontrado!" });
+  }
+
+  if (numero) {
+    piloto.numero = Number(numero);
+  }
+
+  if (nome) {
+    piloto.nome = nome;
+  }
+
+  if (equipe) {
+    piloto.equipe = equipe;
+  }
+
+  res.json(piloto);
 });
 
 app.listen(port, () => {
