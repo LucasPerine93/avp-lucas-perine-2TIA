@@ -9,12 +9,11 @@ app.use(express.json());
 
 // prettier-ignore
 const pilotos = [
-  { numero: 1, nome: "Jorge Martín", equipe: "Aprilia Racing" },
   { numero: 5, nome: "Johann Zarco", equipe: "LCR Honda" },
   { numero: 10, nome: "Luca Marini", equipe: "Repsol Honda Team" },
   { numero: 12, nome: "Maverick Viñales", equipe: "Red Bull KTM Tech3" },
   { numero: 20, nome: "Fabio Quartararo", equipe: "Monster Energy Yamaha MotoGP" },
-  { numero: 21, nome: "Franco Morbidelli", equipe: "VR46" },
+  { numero: 21, nome: "Franco Morbidelli", equipe: "Pertamina Enduro VR46 Racing Team" },
   { numero: 23, nome: "Enea Bastianini", equipe: "Red Bull KTM Tech3" },
   { numero: 25, nome: "Raúl Fernández", equipe: "Trackhouse Racing" },
   { numero: 33, nome: "Brad Binder", equipe: "Red Bull KTM Factory Racing" },
@@ -23,13 +22,14 @@ const pilotos = [
   { numero: 37, nome: "Pedro Acosta", equipe: "Red Bull KTM Factory Racing" },
   { numero: 42, nome: "Álex Rins", equipe: "Monster Energy Yamaha MotoGP" },
   { numero: 43, nome: "Jack Miller", equipe: "Prima Pramac Racing" },
-  { numero: 49, nome: "Fabio Di Giannantonio", equipe: "VR46" },
+  { numero: 49, nome: "Fabio Di Giannantonio", equipe: "Pertamina Enduro VR46 Racing Team" },
   { numero: 54, nome: "Fermín Aldeguer", equipe: "Gresini Racing" },
   { numero: 63, nome: "Francesco Bagnaia", equipe: "Ducati Lenovo Team" },
   { numero: 72, nome: "Marco Bezzecchi", equipe: "Aprilia Racing" },
   { numero: 73, nome: "Álex Márquez", equipe: "Gresini Racing" },
   { numero: 79, nome: "Ai Ogura", equipe: "Trackhouse Racing" },
   { numero: 88, nome: "Miguel Oliveira", equipe: "Prima Pramac Racing" },
+  { numero: 89, nome: "Jorge Martín", equipe: "Aprilia Racing" },
   { numero: 93, nome: "Marc Márquez", equipe: "Ducati Lenovo Team" },
 ];
 
@@ -133,6 +133,21 @@ app.patch("/pilotos/:numero", (req, res) => {
   }
 
   res.json(piloto);
+});
+
+app.delete("/pilotos/:delete", (req, res) => {
+  const deleteNumero = Number(req.params.delete);
+
+  // prettier-ignore
+  const deleteIndex = pilotos.findIndex((piloto) => piloto.numero === deleteNumero);
+
+  if (deleteIndex === -1) {
+    return res.status(404).json({ mensagem: "Piloto não encontrado! " });
+  }
+
+  pilotos.splice(deleteIndex, 1);
+
+  res.json({ mensagem: "Piloto removido com sucesso" });
 });
 
 app.listen(port, () => {
