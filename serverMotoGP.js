@@ -84,39 +84,6 @@ app.get("/", (req, res) => {
 
 /**
  * @swagger
- * /pilotos:
- *   get:
- *     summary: Lista todos os pilotos
- *     description: Retorna todos os pilotos cadastrados no sistema.
- *     tags:
- *       - Pilotos
- *     responses:
- *       200:
- *         description: Lista de pilotos retornada com sucesso.
- *         content:
- *           application/json:
- *             example:
- *               - id: 1
- *                 nome: Johann Zarco
- *                 numero: 5
- *                 equipe: LCR Honda
- */
-app.get("/pilotos", (req, res) => {
-  res.json(pilotos);
-});
-
-app.get("/pilotos/equipes", (req, res) => {
-  const equipes = pilotos.map((equipe) => equipe.equipe);
-  res.json(equipes);
-});
-
-app.get("/pilotos/numeros", (req, res) => {
-  const numeros = pilotos.map((numero) => numero.numero);
-  res.json(numeros);
-});
-
-/**
- * @swagger
  * /pilotos/{id}:
  *   get:
  *     summary: Busca um piloto pelo ID
