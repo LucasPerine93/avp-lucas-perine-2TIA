@@ -1,4 +1,7 @@
 import express from "express";
+import "dotenv/config.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerJsdoc from "swagger-jsdoc";
 
 const app = express();
 const port = 9393;
@@ -6,6 +9,37 @@ const port = 9393;
 const link = `http://localhost:${port}`;
 
 app.use(express.json());
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Sistema de pilotos da MotoGP",
+      version: "1.0.0",
+      description: "Sistema de pilotos da MotoGP, com autenticação via token Bearer",
+    },
+    servers: [
+      {
+        url: "http://localhost:9393",
+        description: "Servidor local"
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          description: "Informe o token no formato: Bearer TOKEN",
+        }
+      }
+    }
+  },
+  apis: ["./serverMotoGP.js"]
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // prettier-ignore
 const pilotos = [
@@ -33,28 +67,90 @@ const pilotos = [
   { "id": 22, "numero": 93, "nome": "Marc Márquez", "equipe": "Ducati Lenovo Team" }
 ];
 
+function autenticar(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = process.env.TOKEN_SECRETO;
+
+  if (authHeader !== `Bearer ${token}`) {
+    return res.status(401).json({ "erro": "Acesso não autorizado" });
+  }
+
+  next();
+}
+
 app.get("/", (req, res) => {
   res.json(pilotos);
 });
 
+/**
+ * @swagger
+ * /pilotos:
+ *   get:
+ *     summary: Lista todos os pilotos
+ *     description: Retorna todos os pilotos cadastrados no sistema.
+ *     tags:
+ *       - Pilotos
+ *     responses:
+ *       200:
+ *         description: Lista de pilotos retornada com sucesso.
+ *         content:
+ *           application/json:
+ *             example:
+ *               - id: 1
+ *                 nome: Johann Zarco
+ *                 numero: 5
+ *                 equipe: LCR Honda
+ */
 app.get("/pilotos", (req, res) => {
-  const nomeDosPilotos = pilotos.map((pilotoNome) => pilotoNome.nome);
-  res.json(nomeDosPilotos);
+  res.json(pilotos);
 });
 
-app.get("/equipes", (req, res) => {
+app.get("/pilotos/equipes", (req, res) => {
   const equipes = pilotos.map((equipe) => equipe.equipe);
   res.json(equipes);
 });
 
-app.get("/numeros", (req, res) => {
+app.get("/pilotos/numeros", (req, res) => {
   const numeros = pilotos.map((numero) => numero.numero);
   res.json(numeros);
 });
 
-app.get("/id/:buscar", (req, res) => {
-  const buscar = Number(req.params.buscar);
-  const id = pilotos.find((id) => id.id === buscar);
+/**
+ * @swagger
+ * /pilotos/{id}:
+ *   get:
+ *     summary: Busca um piloto pelo ID
+ *     description: Retorna os dados de um piloto específico.
+ *     tags:
+ *       - Pilotos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do piloto que será buscado.
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Piloto encontrado com sucesso.
+ *         content:
+ *           application/json:
+ *             example:
+ *               id: 1
+ *               nome: Johann Zarco
+ *               numero: 5
+ *               equipe: LCR Honda
+ *       404:
+ *         description: Piloto não encontrado.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: O piloto não foi encontrado
+ */
+app.get("/pilotos/:id", (req, res) => {
+  const buscar = Number(req.params.id);
+  const id = pilotos.find((piloto) => piloto.id === buscar);
 
   if (!id) {
     return res.status(404).json({ mensagem: "O piloto não foi encontrado" });
@@ -63,10 +159,54 @@ app.get("/id/:buscar", (req, res) => {
   res.json(id);
 });
 
-app.post("/pilotos", (req, res) => {
-  const { numero, nome, equipe } = req.body;
+/**
+ * @swagger
+ * /pilotos:
+ *   post:
+ *     summary: Cadastra um novo piloto
+ *     description: Adiciona um piloto ao sistema usando um token Bearer.
+ *     tags:
+ *       - Pilotos
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             id: 23
+ *             nome: Miguel Oliveira
+ *             numero: 88
+ *             equipe: Prima Pramac Racing
+ *     responses:
+ *       201:
+ *         description: Piloto cadastrado com sucesso.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: Piloto adicionado ao grid!
+ *               piloto:
+ *                 id: 23
+ *                 nome: Miguel Oliveira
+ *                 numero: 88
+ *                 equipe: Prima Pramac Racing
+ *       400:
+ *         description: Dados inválidos ou piloto já cadastrado.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: Todos os campos devem ser preenchidos
+ *       401:
+ *         description: Token ausente ou inválido.
+ *         content:
+ *           application/json:
+ *             example:
+ *               erro: Acesso não autorizado
+ */
+app.post("/pilotos", autenticar, (req, res) => {
+  const { id, numero, nome, equipe } = req.body;
 
-  if (!numero || !nome || !equipe) {
+  if (!id || !numero || !nome || !equipe) {
     return res.status(400).json({
       mensagem: "Todos os campos devem ser preenchidos",
       recebido: req.body,
@@ -97,6 +237,7 @@ app.post("/pilotos", (req, res) => {
   }
 
   const novoPiloto = {
+    id: Number(id),
     numero: num,
     nome: nome,
     equipe: equipe,
@@ -110,14 +251,65 @@ app.post("/pilotos", (req, res) => {
   });
 });
 
-app.patch("/pilotos/:numero", (req, res) => {
-  const buscarNumero = Number(req.params.numero);
-  const { numero, nome, equipe } = req.body;
+/**
+ * @swagger
+ * /pilotos/{id}:
+ *   patch:
+ *     summary: Atualiza parcialmente um piloto
+ *     description: Altera um ou mais dados de um piloto usando um token Bearer.
+ *     tags:
+ *       - Pilotos
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do piloto que será atualizado.
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             equipe: Ducati Lenovo Team
+ *     responses:
+ *       200:
+ *         description: Piloto atualizado com sucesso.
+ *         content:
+ *           application/json:
+ *             example:
+ *               id: 1
+ *               nome: Johann Zarco
+ *               numero: 5
+ *               equipe: Ducati Lenovo Team
+ *       401:
+ *         description: Token ausente ou inválido.
+ *         content:
+ *           application/json:
+ *             example:
+ *               erro: Acesso não autorizado
+ *       404:
+ *         description: Piloto não encontrado.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: Piloto não encontrado!
+ */
+app.patch("/pilotos/:id", autenticar, (req, res) => {
+  const buscarId = Number(req.params.id);
+  const { id, numero, nome, equipe } = req.body;
 
-  const piloto = pilotos.find((piloto) => piloto.numero === buscarNumero);
+  const piloto = pilotos.find((piloto) => piloto.id === buscarId);
 
   if (!piloto) {
     return res.status(404).json({ mensagem: "Piloto não encontrado!" });
+  }
+
+  if (id) {
+    piloto.id = Number(id);
   }
 
   if (numero) {
@@ -135,11 +327,49 @@ app.patch("/pilotos/:numero", (req, res) => {
   res.json(piloto);
 });
 
-app.delete("/pilotos/:delete", (req, res) => {
-  const deleteNumero = Number(req.params.delete);
+/**
+ * @swagger
+ * /pilotos/{id}:
+ *   delete:
+ *     summary: Exclui um piloto
+ *     description: Remove um piloto do sistema usando um token Bearer.
+ *     tags:
+ *       - Pilotos
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do piloto que será excluído.
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Piloto excluído com sucesso.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: Piloto removido com sucesso
+ *       401:
+ *         description: Token ausente ou inválido.
+ *         content:
+ *           application/json:
+ *             example:
+ *               erro: Acesso não autorizado
+ *       404:
+ *         description: Piloto não encontrado.
+ *         content:
+ *           application/json:
+ *             example:
+ *               mensagem: Piloto não encontrado!
+ */
+app.delete("/pilotos/:id", autenticar, (req, res) => {
+  const deleteId = Number(req.params.id);
 
   // prettier-ignore
-  const deleteIndex = pilotos.findIndex((piloto) => piloto.numero === deleteNumero);
+  const deleteIndex = pilotos.findIndex((piloto) => piloto.id === deleteId);
 
   if (deleteIndex === -1) {
     return res.status(404).json({ mensagem: "Piloto não encontrado! " });
