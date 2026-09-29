@@ -78,6 +78,37 @@ function autenticar(req, res, next) {
   next();
 }
 
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Lista todos os pilotos
+ *     description: Retorna todos os pilotos cadastrados no sistema.
+ *     tags:
+ *       - Pilotos
+ *     responses:
+ *       200:
+ *         description: Lista de pilotos retornada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   numero:
+ *                     type: integer
+ *                     example: 5
+ *                   nome:
+ *                     type: string
+ *                     example: Johann Zarco
+ *                   equipe:
+ *                     type: string
+ *                     example: LCR Honda
+ */
 app.get("/", (req, res) => {
   res.json(pilotos);
 });
