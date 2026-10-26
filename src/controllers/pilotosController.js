@@ -1,4 +1,4 @@
-import pilotos from "../data/pilotos.js";
+import * as pilotosModel from "../models/pilotosModel";
 
 export function listarPilotos(req, res) {
   res.json(pilotos);

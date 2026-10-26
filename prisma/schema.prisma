@@ -12,7 +12,7 @@ datasource db {
   provider = "mysql"
 }
 
-model Piloto {
+model piloto {
   id  Int @id @default(autoincrement())
   numero Int
   nome String @db.VarChar(100)
