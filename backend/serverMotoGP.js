@@ -3,6 +3,7 @@ import "dotenv/config.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./src/config/swagger.js";
 import pilotosRoutes from "./src/routes/pilotosRoutes.js";
+import usuariosRoutes from "./src/routes/usuariosRoutes.js";
 import prisma from "./src/config/prisma.js";
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/pilotos", pilotosRoutes);
+app.use("/usuarios", usuariosRoutes);
 
 try {
   await prisma.$connect();
@@ -26,9 +28,7 @@ try {
 
 } catch (e) {
   console.error("[ERRO]: Não foi possivel se conecta ao banco: ". e.message);
-
   await prisma.$disconnect();
-
   process.exitCode = -1;
 
 }

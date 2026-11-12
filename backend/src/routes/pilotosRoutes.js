@@ -1,10 +1,10 @@
 import express from "express";
 import autenticar from "../middlewares/autenticar.js";
-import { atualizarPiloto, 
-            buscarPilotoPorId, 
-            deletarPiloto, 
-            editarPiloto, 
-            listarPilotos } from "../controllers/pilotosController.js";
+import { criarPiloto, 
+         buscarPorId,  
+         deletarPiloto, 
+         editarPiloto, 
+         listarPilotos } from "../controllers/pilotosController.js";
 
 
 
@@ -12,7 +12,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /:
+ * /pilotos:
  *   get:
  *     summary: Lista todos os pilotos
  *     description: Retorna todos os pilotos cadastrados no sistema.
@@ -76,7 +76,7 @@ router.get("/", listarPilotos);
  *             example:
  *               mensagem: O piloto não foi encontrado
  */
-router.get("/:id", buscarPilotoPorId);
+router.get("/:id", buscarPorId);
 
 /**
  * @swagger
@@ -122,7 +122,7 @@ router.get("/:id", buscarPilotoPorId);
  *             example:
  *               erro: Acesso não autorizado
  */
-router.post("/", autenticar, atualizarPiloto);
+router.post("/", autenticar, criarPiloto);
 
 /**
  * @swagger

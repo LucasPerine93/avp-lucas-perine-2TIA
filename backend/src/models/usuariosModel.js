@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 
 export function criar({nome, email, senhaHash}) {
-    return prisma.usuario.create({
+    return prisma.usuarios.create({
         data: {
             nome,
             email,
@@ -18,7 +18,7 @@ export function criar({nome, email, senhaHash}) {
 }
 
 export function buscaPorEmail(email) {
-    return prisma.usuario.findUnique({
+    return prisma.usuarios.findUnique({
         where: {
             email
         }
