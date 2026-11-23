@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function CadastroPiloto() {
     const [numero, setNumero] = useState("");
     const [nome, setNome] = useState("");
+    const [email, setEmail] = useState("");
     const [equipe, setEquipe] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
@@ -14,7 +15,7 @@ export default function CadastroPiloto() {
         setMensagem("");
         setErro("");
 
-        if (!numero || !nome.trim() || !equipe.trim() || !senha || !confirmarSenha) {
+        if (!numero || !nome.trim() || !email.trim() || !equipe.trim() || !senha || !confirmarSenha) {
             setErro("Preencha todas as informações do piloto.");
             return;
         }
@@ -76,85 +77,114 @@ export default function CadastroPiloto() {
                         </div>
 
                         <form onSubmit={cadastrar} className="space-y-5">
-                            <div className="grid gap-5 sm:grid-cols-[120px_1fr]">
-                                <div>
-                                    <label htmlFor="numero" className="mb-2 block text-sm font-bold text-zinc-200">
-                                        Número
-                                    </label>
-                                    <input
-                                        id="numero"
-                                        type="number"
-                                        min="1"
-                                        max="99"
-                                        value={numero}
-                                        onChange={(evento) => setNumero(evento.target.value)}
-                                        placeholder="93"
-                                        required
-                                        className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-lg font-black text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                                    />
-                                </div>
+                            <fieldset className="space-y-5 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4 sm:p-5">
+                                <legend className="px-2 text-xs font-black uppercase tracking-[0.3em] text-red-500">
+                                    Dados do usuário
+                                </legend>
 
                                 <div>
                                     <label htmlFor="nome" className="mb-2 block text-sm font-bold text-zinc-200">
-                                        Nome do piloto
+                                        Nome completo
                                     </label>
                                     <input
                                         id="nome"
                                         type="text"
                                         value={nome}
                                         onChange={(evento) => setNome(evento.target.value)}
-                                        placeholder="Digite seu nome"
+                                        placeholder="Digite seu nome completo"
                                         required
-                                        className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                        className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
                                     />
                                 </div>
-                            </div>
 
-                            <div>
-                                <label htmlFor="equipe" className="mb-2 block text-sm font-bold text-zinc-200">
-                                    Equipe
-                                </label>
-                                <input
-                                    id="equipe"
-                                    type="text"
-                                    value={equipe}
-                                    onChange={(evento) => setEquipe(evento.target.value)}
-                                    placeholder="Ex.: Red Bull Racing"
-                                    required
-                                    className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                                />
-                            </div>
+                                <div>
+                                    <label htmlFor="email" className="mb-2 block text-sm font-bold text-zinc-200">
+                                        E-mail
+                                    </label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        value={email}
+                                        onChange={(evento) => setEmail(evento.target.value)}
+                                        placeholder="seu@email.com"
+                                        required
+                                        className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                    />
+                                </div>
 
-                            <div>
-                                <label htmlFor="senha" className="mb-2 block text-sm font-bold text-zinc-200">
-                                    Senha
-                                </label>
-                                <input
-                                    id="senha"
-                                    type="password"
-                                    value={senha}
-                                    onChange={(evento) => setSenha(evento.target.value)}
-                                    placeholder="Mínimo de 8 caracteres"
-                                    minLength={8}
-                                    required
-                                    className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                                />
-                            </div>
+                                <div className="grid gap-5 sm:grid-cols-2">
+                                    <div>
+                                        <label htmlFor="senha" className="mb-2 block text-sm font-bold text-zinc-200">
+                                            Senha
+                                        </label>
+                                        <input
+                                            id="senha"
+                                            type="password"
+                                            value={senha}
+                                            onChange={(evento) => setSenha(evento.target.value)}
+                                            placeholder="Mínimo de 8 caracteres"
+                                            minLength={8}
+                                            required
+                                            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                        />
+                                    </div>
 
-                            <div>
-                                <label htmlFor="confirmarSenha" className="mb-2 block text-sm font-bold text-zinc-200">
-                                    Confirmar senha
-                                </label>
-                                <input
-                                    id="confirmarSenha"
-                                    type="password"
-                                    value={confirmarSenha}
-                                    onChange={(evento) => setConfirmarSenha(evento.target.value)}
-                                    placeholder="Digite a senha novamente"
-                                    required
-                                    className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                                />
-                            </div>
+                                    <div>
+                                        <label htmlFor="confirmarSenha" className="mb-2 block text-sm font-bold text-zinc-200">
+                                            Confirmar senha
+                                        </label>
+                                        <input
+                                            id="confirmarSenha"
+                                            type="password"
+                                            value={confirmarSenha}
+                                            onChange={(evento) => setConfirmarSenha(evento.target.value)}
+                                            placeholder="Repita sua senha"
+                                            required
+                                            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                        />
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset className="space-y-5 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4 sm:p-5">
+                                <legend className="px-2 text-xs font-black uppercase tracking-[0.3em] text-red-500">
+                                    Dados do piloto
+                                </legend>
+
+                                <div className="grid gap-5 sm:grid-cols-[120px_1fr]">
+                                    <div>
+                                        <label htmlFor="numero" className="mb-2 block text-sm font-bold text-zinc-200">
+                                            Número
+                                        </label>
+                                        <input
+                                            id="numero"
+                                            type="number"
+                                            min="1"
+                                            max="99"
+                                            value={numero}
+                                            onChange={(evento) => setNumero(evento.target.value)}
+                                            placeholder="93"
+                                            required
+                                            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-lg font-black text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="equipe" className="mb-2 block text-sm font-bold text-zinc-200">
+                                            Equipe
+                                        </label>
+                                        <input
+                                            id="equipe"
+                                            type="text"
+                                            value={equipe}
+                                            onChange={(evento) => setEquipe(evento.target.value)}
+                                            placeholder="Ex.: Red Bull Racing"
+                                            required
+                                            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+                                        />
+                                    </div>
+                                </div>
+                            </fieldset>
 
                             <button
                                 type="submit"
