@@ -27,7 +27,7 @@ try {
   });
 
 } catch (e) {
-  console.error("[ERRO]: Não foi possivel se conecta ao banco: ". e.message);
+  console.error("[ERRO]: Não foi possivel se conecta ao banco: ", e.message);
   await prisma.$disconnect();
   process.exitCode = -1;
 
