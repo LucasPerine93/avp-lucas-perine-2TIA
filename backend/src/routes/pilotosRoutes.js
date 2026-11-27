@@ -41,7 +41,7 @@ const router = express.Router();
  *                     type: string
  *                     example: LCR Honda
  */
-router.get("/", listarPilotos);
+router.get("/listar", listarPilotos);
 
 /**
  * @swagger
@@ -76,7 +76,7 @@ router.get("/", listarPilotos);
  *             example:
  *               mensagem: O piloto não foi encontrado
  */
-router.get("/:id", buscarPorId);
+router.get("/buscarId:id", buscarPorId);
 
 /**
  * @swagger
@@ -122,7 +122,7 @@ router.get("/:id", buscarPorId);
  *             example:
  *               erro: Acesso não autorizado
  */
-router.post("/", autenticar, criarPiloto);
+router.post("/criarPiloto", autenticar, criarPiloto);
 
 /**
  * @swagger
@@ -171,7 +171,7 @@ router.post("/", autenticar, criarPiloto);
  *             example:
  *               mensagem: Piloto não encontrado!
  */
-router.patch("/:id", autenticar, editarPiloto);
+router.patch("/editarPiloto:id", autenticar, editarPiloto);
 
 /**
  * @swagger
@@ -211,6 +211,6 @@ router.patch("/:id", autenticar, editarPiloto);
  *             example:
  *               mensagem: Piloto não encontrado!
  */
-router.delete("/:id", autenticar, deletarPiloto);
+router.delete("/deletarPiloto:id", autenticar, deletarPiloto);
 
 export default router;

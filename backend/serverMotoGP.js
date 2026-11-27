@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import "dotenv/config.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./src/config/swagger.js";
@@ -11,6 +12,7 @@ const port = 9393;
 
 const link = `http://localhost:${port}`;
 
+app.use(cors())
 app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
